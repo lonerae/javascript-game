@@ -1,5 +1,6 @@
 export default class InputHandler {
-    constructor() {
+    constructor(game) {
+        this.game = game;
         this.keys = [];
         window.addEventListener('keydown', e => {
             if ((   e.key === 'w' ||
@@ -10,6 +11,9 @@ export default class InputHandler {
                 this.keys.push(e.key);
             } 
         });
+        window.addEventListener('click', e => {
+            this.game.player.attack(e.x - this.game.bounds['LEFT'], e.y - this.game.bounds['TOP']);
+        })
         window.addEventListener('keyup', e => {
             if (   e.key === 'w' ||
                    e.key === 'a' ||

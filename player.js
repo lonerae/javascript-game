@@ -1,4 +1,5 @@
 import { Standing, Running } from "./playerStates.js";
+import { RangedAttack } from "./playerAttack.js";
 
 export default class Player {
     constructor(game) {
@@ -10,8 +11,14 @@ export default class Player {
         this.y = this.game.height / 2 - this.height / 2;
         this.speedX = 2;
         this.speedY = this.speedX;
+        this.offsetX = 5;
+        this.offsetW = -10;
+        this.offsetY = 5;
+        this.offsetH = -7;
         this.states = [new Standing(this.game), new Running(this.game)];
         this.currentState = null;
+        this.attacks = [new RangedAttack(this.game)];
+        this.currentAttack = null;
         this.health = 100;
     }
     setState(state, speed) {
@@ -19,23 +26,16 @@ export default class Player {
         this.game.speed = speed;
         this.currentState.enter();
     }
-    update(input, deltatime) {
-        this.checkCollision(deltatime);
+    attack(targetX, targetY) {
+        this.currentAttack.targetX = targetX;
+        this.currentAttack.targetY = targetY;
+        this.currentAttack.activate();
+    }
+    update(input) {
         this.currentState.handleInput(input);
     }
     draw(context) {
-        context.strokeRect(this.x, this.y, this.width, this.height);
+        context.strokeRect(this.x + this.offsetX, this.y + this.offsetY, this.width + this.offsetW, this.height + this.offsetH);
         context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
-    }
-    checkCollision(deltatime) {
-        this.game.enemies.forEach(enemy => {
-            if (    enemy.x < this.x + this.width &&
-                    enemy.x + enemy.width > this.x &&
-                    enemy.y < this.y + this.height &&
-                    enemy.y + enemy.height > this.y
-                ) {
-                    if (this.health > 0) enemy.attack(deltatime);
-                }           
-        });
     }
 }

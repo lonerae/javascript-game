@@ -2,6 +2,7 @@ class Enemy {
     constructor(game) {
         this.game = game;
         this.deletionFlag = false;
+        this.targetModifier = Math.random() * this.game.player.height;
     }
     update() {
         if (    this.x > this.game.width || 
@@ -22,26 +23,13 @@ export class Zombie extends Enemy {
         this.height = 50;
         this.image = zombie;
         this.baseSpeed = 1.5;    
+        this.offsetX = 5;
+        this.offsetW = -5;
+        this.offsetY = 0;
+        this.offsetH = -0;
         this.setSpawnPoint(Math.random()); 
-        this.slope = 0;
         this.attackCooldown = 200;
         this.attackTimer = 0;
-    }
-    update() {
-        super.update();
-        let targetX = this.game.player.x + this.game.player.width / 2 + this.width / 2;
-        let targetY = this.game.player.y + this.game.player.height / 2 - this.height / 2;
-        if (targetX != this.x) {
-            this.slope = (targetY - this.y) / (targetX - this.x);
-            this.x += (1 / Math.sqrt(1 + Math.pow(this.slope,2))) * this.speedX;
-            this.y += Math.sqrt(Math.pow(this.slope,2) / (1 + Math.pow(this.slope,2))) * this.speedY;
-            this.speedX = this.baseSpeed * (Math.abs(this.x - targetX) / (targetX - this.x));
-            this.speedY = this.baseSpeed * (Math.abs(this.y - targetY) / (targetY - this.y));
-        }
-    }
-    draw(context) {
-        context.strokeRect(this.x, this.y, this.width, this.height);
-        context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
     }
     setSpawnPoint(chance) {
         if (chance < 0.5) {
@@ -58,10 +46,43 @@ export class Zombie extends Enemy {
     }
     attack(deltatime) {
         if (this.attackTimer > this.attackCooldown) {
-            this.game.player.health -= 1;
+            if (this.game.player.health > 0) this.game.player.health -= 1;
             this.attackTimer = 0;
         } else {
             this.attackTimer += deltatime;
         }
+    }
+    update(deltatime) {
+        super.update();
+        let dx = (this.game.player.x + this.game.player.width / 2) - (this.x + this.width / 2);
+        let dy = (this.game.player.y + this.targetModifier) - (this.y + this.height / 2);
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        this.speedX = dx / dist * this.baseSpeed;
+        this.speedY = dy / dist * this.baseSpeed;
+        if (    this.game.player.currentAttack.activated &&
+                this.x + this.offsetX + this.width + this.offsetW + this.speedX > this.game.player.currentAttack.x &&
+                this.x + this.offsetX + this.speedX < this.game.player.currentAttack.x + this.game.player.currentAttack.width &&
+                this.y + this.offsetY + this.height + this.offsetH + this.speedY > this.game.player.currentAttack.y &&
+                this.y + this.offsetY + this.speedY < this.game.player.currentAttack.y + this.game.player.currentAttack.height)  
+        {
+            this.game.player.currentAttack.activated = false;
+            this.deletionFlag = true;
+        }
+        else {
+            if (    this.x + this.offsetX + this.width + this.offsetW + this.speedX < this.game.player.x + this.game.player.offsetX ||
+                    this.x + this.offsetX + this.speedX > this.game.player.x + this.game.player.offsetX + this.game.player.width + this.game.player.offsetW ||
+                    this.y + this.offsetY + this.height + this.offsetH + this.speedY < this.game.player.y + this.game.player.offsetY ||
+                    this.y + this.offsetY + this.speedY > this.game.player.y + this.game.player.offsetY + this.game.player.height + this.game.player.offsetH) 
+            {
+                this.x += this.speedX;
+                this.y += this.speedY;
+            } else {
+                this.attack(deltatime);         
+            }
+        }
+    }
+    draw(context) {
+        context.strokeRect(this.x + this.offsetX, this.y, this.width + this.offsetW, this.height);
+        context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
     }
 }
