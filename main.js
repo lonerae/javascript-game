@@ -22,14 +22,15 @@ window.addEventListener('load', function() {
             this.enemySpawn = 100;
             this.enemyTimer = 0;
             this.enemies = [];
-            this.maxEnemies = 10;
+            this.maxEnemies = 1;
+            this.activeAttacks = [];
             this.player = new Player(this);
             this.input = new InputHandler(this);
             this.playerInfo = new UI(this);
             // initial state is STANDING
             this.player.currentState = this.player.states[0];
             this.player.currentState.enter();
-            // initial attack is RANGEDs
+            // initial attack is CLOSE
             this.player.currentAttack = this.player.attacks[0];
         }
         update(deltatime) {
@@ -37,6 +38,9 @@ window.addEventListener('load', function() {
             this.player.update(this.input.keys);
             // handle attacks
             this.player.currentAttack.update(deltatime);
+            this.activeAttacks.forEach(attack => {
+                if (attack !== this.player.currentAttack) attack.update(deltatime);
+            });
             // handle enemies
             if (this.enemyTimer > this.enemySpawn && this.enemies.length < this.maxEnemies) {
                 this.enemies.push(new Zombie(this));
@@ -48,17 +52,21 @@ window.addEventListener('load', function() {
                 enemy.update(deltatime);
             });
             this.enemies = this.enemies.filter(enemy => !enemy.deletionFlag);
+            this.activeAttacks = this.activeAttacks.filter(attack => attack.activated || attack.cooldownTimer <= attack.cooldown);
         }
         draw(context) {
             // handle player
             this.player.draw(context);
             // handle attacks
-            if (this.player.currentAttack.activated) this.player.currentAttack.draw(context);
-            this.playerInfo.draw(context);
+            this.activeAttacks.forEach(attack => {
+                if (attack.activated) attack.draw(context);
+            });
             // handle enemies
             this.enemies.forEach(enemy => {
                 enemy.draw(context);
-            })
+            });
+            // handle ui
+            this.playerInfo.draw(context);
         }
     }
 

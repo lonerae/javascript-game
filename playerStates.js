@@ -1,13 +1,20 @@
  const states = {
     STANDING: 0,
-    RUNNING: 1,
-    HIT: 2
+    RUNNING: 1
 }
 
 class State {
     constructor(game, state) {
         this.game = game;
         this.state = state;
+    }
+    handleInput(input) {
+        if (input.includes('1')) {
+            this.game.player.setAttack(0);
+        }
+        if (input.includes('2')) {
+            this.game.player.setAttack(1);
+        }
     }
 }
 
@@ -19,11 +26,12 @@ export class Standing extends State {
 
     }
     handleInput(input) {
+        super.handleInput(input);
         if (input.includes('w') ||
             input.includes('a') ||
             input.includes('s') ||
             input.includes('d')) {
-            this.game.player.setState(states.RUNNING, 1);
+            this.game.player.setState(states.RUNNING, 2);
         }
     }
 }
@@ -36,27 +44,38 @@ export class Running extends State {
 
     }
     handleInput(input) {
+        super.handleInput(input);
         let movFlag = true;
+
         // horizontal movement
         if (input.includes('d')) {
+            this.game.player.flipped = false;
+            if (this.game.player.currentAttack.activated && !this.game.player.currentAttack.vertical && this.game.player.currentAttack.flipped) this.game.player.flipped = true;
             for (let i = 0; i < this.game.enemies.length ; ++i) {
                 if (!this.checkX(this.game.enemies[i], 1)) {
                     movFlag = false;
                     break;
                 }
             };
-            if (movFlag) this.game.player.x += this.game.player.speedX;
+            if (movFlag) {
+                this.game.player.x += this.game.player.speedX;
+            }
         } 
         else if (input.includes('a')) {
+            this.game.player.flipped = true;
+            if (this.game.player.currentAttack.activated && !this.game.player.currentAttack.vertical && !this.game.player.currentAttack.flipped) this.game.player.flipped = false;
             for (let i = 0; i < this.game.enemies.length ; ++i) {
                 if (!this.checkX(this.game.enemies[i], -1)) {
                     movFlag = false;
                     break;
                 }
             };
-            if (movFlag) this.game.player.x += -this.game.player.speedX;
-        }
+            if (movFlag) {
+                this.game.player.x += -this.game.player.speedX;
+            }
+        } 
         movFlag = true;
+        
         // vertical movement
         if (input.includes('w')) {
             for (let i = 0; i < this.game.enemies.length ; ++i) {
@@ -65,7 +84,9 @@ export class Running extends State {
                     break;
                 }
             };
-            if (movFlag) this.game.player.y += -this.game.player.speedY;
+            if (movFlag) {
+                this.game.player.y += -this.game.player.speedY;
+            }
         }
         else if (input.includes('s')) {
             for (let i = 0; i < this.game.enemies.length ; ++i) {
@@ -76,8 +97,11 @@ export class Running extends State {
                     }
                 };
             }
-            if (movFlag) this.game.player.y += this.game.player.speedY;
+            if (movFlag) {
+                this.game.player.y += this.game.player.speedY;
+            }
         }
+
         if (input.length === 0) {
             this.game.player.setState(states.STANDING, 0);
         }

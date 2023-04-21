@@ -1,5 +1,5 @@
 import { Standing, Running } from "./playerStates.js";
-import { RangedAttack } from "./playerAttack.js";
+import { CloseAttack, RangedAttack } from "./playerAttack.js";
 
 export default class Player {
     constructor(game) {
@@ -9,7 +9,7 @@ export default class Player {
         this.height = 150;
         this.x = this.game.width / 2 - this.width / 2;
         this.y = this.game.height / 2 - this.height / 2;
-        this.speedX = 2;
+        this.speedX = 0;
         this.speedY = this.speedX;
         this.offsetX = 5;
         this.offsetW = -10;
@@ -17,14 +17,18 @@ export default class Player {
         this.offsetH = -7;
         this.states = [new Standing(this.game), new Running(this.game)];
         this.currentState = null;
-        this.attacks = [new RangedAttack(this.game)];
+        this.attacks = [new CloseAttack(this.game), new RangedAttack(this.game)];
         this.currentAttack = null;
         this.health = 100;
+        this.flipped = false;
     }
     setState(state, speed) {
         this.currentState = this.states[state];
-        this.game.speed = speed;
+        this.speedX = this.speedY = speed;
         this.currentState.enter();
+    }
+    setAttack(attack) {
+        this.currentAttack = this.attacks[attack];
     }
     attack(targetX, targetY) {
         this.currentAttack.targetX = targetX;
@@ -35,7 +39,13 @@ export default class Player {
         this.currentState.handleInput(input);
     }
     draw(context) {
-        context.strokeRect(this.x + this.offsetX, this.y + this.offsetY, this.width + this.offsetW, this.height + this.offsetH);
-        context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+        if (this.flipped) {
+            context.scale(-1, 1);
+            context.drawImage(this.image, 0, 0, this.width, this.height, -this.x - this.width, this.y, this.width, this.height);
+            context.scale(-1, 1);    
+        }
+        else {
+            context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+        }
     }
 }

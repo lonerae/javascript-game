@@ -6,7 +6,9 @@ export default class InputHandler {
             if ((   e.key === 'w' ||
                     e.key === 'a' ||
                     e.key === 's' ||
-                    e.key === 'd'
+                    e.key === 'd' ||
+                    e.key === '1' ||
+                    e.key === '2'
                 )   && this.keys.indexOf(e.key) === -1) {
                 this.keys.push(e.key);
             } 
@@ -18,7 +20,9 @@ export default class InputHandler {
             if (   e.key === 'w' ||
                    e.key === 'a' ||
                    e.key === 's' ||
-                   e.key === 'd'
+                   e.key === 'd' ||
+                   e.key === '1' ||
+                   e.key === '2'
                 ) {
                 this.keys.splice(this.keys.indexOf(e.key), 1);
             }

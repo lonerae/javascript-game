@@ -59,30 +59,18 @@ export class Zombie extends Enemy {
         let dist = Math.sqrt(dx * dx + dy * dy);
         this.speedX = dx / dist * this.baseSpeed;
         this.speedY = dy / dist * this.baseSpeed;
-        if (    this.game.player.currentAttack.activated &&
-                this.x + this.offsetX + this.width + this.offsetW + this.speedX > this.game.player.currentAttack.x &&
-                this.x + this.offsetX + this.speedX < this.game.player.currentAttack.x + this.game.player.currentAttack.width &&
-                this.y + this.offsetY + this.height + this.offsetH + this.speedY > this.game.player.currentAttack.y &&
-                this.y + this.offsetY + this.speedY < this.game.player.currentAttack.y + this.game.player.currentAttack.height)  
+        if (    this.x + this.offsetX + this.width + this.offsetW + this.speedX < this.game.player.x + this.game.player.offsetX ||
+                this.x + this.offsetX + this.speedX > this.game.player.x + this.game.player.offsetX + this.game.player.width + this.game.player.offsetW ||
+                this.y + this.offsetY + this.height + this.offsetH + this.speedY < this.game.player.y + this.game.player.offsetY ||
+                this.y + this.offsetY + this.speedY > this.game.player.y + this.game.player.offsetY + this.game.player.height + this.game.player.offsetH) 
         {
-            this.game.player.currentAttack.activated = false;
-            this.deletionFlag = true;
-        }
-        else {
-            if (    this.x + this.offsetX + this.width + this.offsetW + this.speedX < this.game.player.x + this.game.player.offsetX ||
-                    this.x + this.offsetX + this.speedX > this.game.player.x + this.game.player.offsetX + this.game.player.width + this.game.player.offsetW ||
-                    this.y + this.offsetY + this.height + this.offsetH + this.speedY < this.game.player.y + this.game.player.offsetY ||
-                    this.y + this.offsetY + this.speedY > this.game.player.y + this.game.player.offsetY + this.game.player.height + this.game.player.offsetH) 
-            {
-                this.x += this.speedX;
-                this.y += this.speedY;
-            } else {
-                this.attack(deltatime);         
-            }
+            this.x += this.speedX;
+            this.y += this.speedY;
+        } else {
+            this.attack(deltatime);         
         }
     }
     draw(context) {
-        context.strokeRect(this.x + this.offsetX, this.y, this.width + this.offsetW, this.height);
         context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
     }
 }
