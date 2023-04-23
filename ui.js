@@ -3,6 +3,7 @@ export class UI {
         this.game = game;
         this.fontSize = 30;
         this.fontFamily = 'Helvetica';
+        this.fontColor = '#ff0000';
         this.attackWidth = 70;
         this.attackHeight = 70;
         this.attackIcons = [closeui, rangedui];
@@ -11,13 +12,14 @@ export class UI {
         context.save();
         context.shadowOffsetX = 2;
         context.shadowOffsetY = 2;
-        context.shadowColor = 'white';
+        context.shadowColor = 'black';
         context.shadowBlur = 0;
         context.font = this.fontSize + 'px ' + this.fontFamily;
         context.textAlign = 'left';
-        context.fillStyle = this.game.fontColor;
+        context.fillStyle = this.fontColor;
         // health
-        context.fillText('Health: ' + this.game.player.health, 20, 50);
+        context.fillRect(20, 30, (this.game.player.health / 100) * 300, 20);
+        // context.fillText('Health: ' + this.game.player.health, 20, 50);
         context.restore();
         // abilities
         this.attackIcons.forEach((icon, index) => {

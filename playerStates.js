@@ -46,11 +46,10 @@ export class Running extends State {
     handleInput(input) {
         super.handleInput(input);
         let movFlag = true;
-
         // horizontal movement
         if (input.includes('d')) {
             this.game.player.flipped = false;
-            if (this.game.player.currentAttack.activated && !this.game.player.currentAttack.vertical && this.game.player.currentAttack.flipped) this.game.player.flipped = true;
+            if (this.game.player.currentAttack.activated && this.game.player.currentAttack.flipsPlayer && this.game.player.currentAttack.flipped) this.game.player.flipped = true;
             for (let i = 0; i < this.game.enemies.length ; ++i) {
                 if (!this.checkX(this.game.enemies[i], 1)) {
                     movFlag = false;
@@ -63,7 +62,7 @@ export class Running extends State {
         } 
         else if (input.includes('a')) {
             this.game.player.flipped = true;
-            if (this.game.player.currentAttack.activated && !this.game.player.currentAttack.vertical && !this.game.player.currentAttack.flipped) this.game.player.flipped = false;
+            if (this.game.player.currentAttack.activated && this.game.player.currentAttack.flipsPlayer && !this.game.player.currentAttack.flipped) this.game.player.flipped = false;
             for (let i = 0; i < this.game.enemies.length ; ++i) {
                 if (!this.checkX(this.game.enemies[i], -1)) {
                     movFlag = false;
@@ -75,7 +74,6 @@ export class Running extends State {
             }
         } 
         movFlag = true;
-        
         // vertical movement
         if (input.includes('w')) {
             for (let i = 0; i < this.game.enemies.length ; ++i) {
