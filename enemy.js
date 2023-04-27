@@ -30,6 +30,7 @@ export class Zombie extends Enemy {
         this.setSpawnPoint(Math.random()); 
         this.attackCooldown = 200;
         this.attackTimer = 0;
+        this.health = 50;
     }
     setSpawnPoint(chance) {
         if (chance < 0.5) {
@@ -71,6 +72,8 @@ export class Zombie extends Enemy {
         }
     }
     draw(context) {
+        context.fillStyle = '#ff0000';
+        context.fillRect(this.x, this.y - 10, this.health, 5);
         context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
     }
 }

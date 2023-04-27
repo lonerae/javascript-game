@@ -1,6 +1,7 @@
 class Attack {
     constructor(game) {
         this.game = game;
+        this.visible = false;
         this.flipsPlayer = false;
     }
     activate() {
@@ -35,7 +36,9 @@ export class CloseAttack extends Attack {
         this.weapon = weapon;
         this.activated = false;
         this.flipped = false;
-        this.cooldownTimer = this.weapon.cooldown;
+        this.cooldown = this.weapon.cooldown;
+        this.cooldownTimer = this.cooldown;
+        this.visibilityTimer = 0;
     }
     activate() {
         if (this.cooldownTimer >= this.weapon.cooldown) {
@@ -45,20 +48,24 @@ export class CloseAttack extends Attack {
     }
     update(deltatime) {
         super.update();
-        this.game.enemies.forEach(enemy => {
-            if (this.activated) {
-                this.weapon.checkCollision(this,enemy);
-            } 
-        });
         if (this.activated) {
+            this.visible = true;
+            this.game.enemies.forEach(enemy => {
+                this.weapon.checkCollision(this,enemy);
+            });
+        }   
+        if (this.visible)  {
             this.weapon.updateVisuals(this);
-        } else {
-            if (this.cooldownTimer < this.weapon.cooldown) this.cooldownTimer += deltatime;
+            this.visibilityTimer += deltatime;
+            if (this.visibilityTimer >= this.weapon.visibilityTime) {
+                this.visible = false;
+                this.visibilityTimer = 0;
+            }
         }      
+        if (this.cooldownTimer < this.weapon.cooldown) this.cooldownTimer += deltatime;
     }
     draw(context) {
-        this.weapon.draw(context,this);
-        
+        this.weapon.draw(context,this);       
     }
 }
 
@@ -70,12 +77,15 @@ export class RangedAttack extends Attack {
         this.height = 25;
         this.baseSpeed = 10;
         this.activated = false;
-        this.cooldown = 500;
+        this.cooldown = 1000;
         this.cooldownTimer = this.cooldown;
+        this.damage = 20;
+        this.cost = 5;
     }
     activate() {
-        if (this.cooldownTimer >= this.cooldown) {
+        if (this.cooldownTimer >= this.cooldown && (this.game.player.obsession - this.cost >= 0)) {
             super.activate();
+            this.game.player.obsession -= this.cost;
             this.x = this.game.player.x + this.game.player.width / 2;
             this.y = this.game.player.y + this.game.player.height / 3;
             let dx = this.x - this.targetX;
@@ -87,26 +97,23 @@ export class RangedAttack extends Attack {
     }
     update(deltatime) {
         super.update();
-        this.game.enemies.forEach(enemy => {
-            if (this.activated) {
+        this.visible = this.activated;
+        if (this.activated) {
+            this.game.enemies.forEach(enemy => {
                 if (    this.x + this.width > enemy.x + enemy.offsetX &&
                         this.x < enemy.x + enemy.offsetX + enemy.width + enemy.offsetW &&
                         this.y + this.height > enemy.y + enemy.offsetY &&
                         this.y < enemy.y + enemy.offsetY + enemy.height + enemy.offsetH)  
                 {
                     this.activated = false;
-                    enemy.deletionFlag = true;
+                    enemy.health -= this.damage;
+                    if (enemy.health <= 0) enemy.deletionFlag = true;
                 }
-            }
-        });
-        if (this.activated) {
+            });
             this.x -= this.rangedSpeedX;
             this.y -= this.rangedSpeedY;
-        } else {
-            if (this.cooldownTimer < this.cooldown) {
-                this.cooldownTimer += deltatime;
-            }
         }
+        if (this.cooldownTimer < this.cooldown) this.cooldownTimer += deltatime;
     }
     draw(context) {
         context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);

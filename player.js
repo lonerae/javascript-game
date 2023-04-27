@@ -1,6 +1,6 @@
 import { Standing, Running } from "./playerStates.js";
 import { CloseAttack, RangedAttack } from "./playerAttack.js";
-import { Sword } from "./weapons.js";
+import Inventory from "./inventory.js";
 
 export default class Player {
     constructor(game) {
@@ -18,9 +18,11 @@ export default class Player {
         this.offsetH = -7;
         this.states = [new Standing(this.game), new Running(this.game)];
         this.currentState = null;
-        this.attacks = [new CloseAttack(this.game, new Sword()), new RangedAttack(this.game)];
+        this.inventory = new Inventory();
+        this.attacks = [new CloseAttack(this.game, this.inventory.weapon), new RangedAttack(this.game)];
         this.currentAttack = null;
         this.health = 100;
+        this.obsession = 50;
         this.flipped = false;
     }
     setState(state, speed) {

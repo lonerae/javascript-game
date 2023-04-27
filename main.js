@@ -52,14 +52,14 @@ window.addEventListener('load', function() {
                 enemy.update(deltatime);
             });
             this.enemies = this.enemies.filter(enemy => !enemy.deletionFlag);
-            this.activeAttacks = this.activeAttacks.filter(attack => attack.activated || attack.cooldownTimer <= attack.cooldown);
+            this.activeAttacks = this.activeAttacks.filter(attack => attack.visible || attack.cooldownTimer <= attack.cooldown);
         }
         draw(context) {
             // handle player
             this.player.draw(context);
             // handle attacks
             this.activeAttacks.forEach(attack => {
-                if (attack.activated) attack.draw(context);
+                if (attack.visible) attack.draw(context);
             });
             // handle enemies
             this.enemies.forEach(enemy => {

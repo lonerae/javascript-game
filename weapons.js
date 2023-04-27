@@ -13,10 +13,12 @@ export class Sword extends Weapon {
         this.image = sword;
         this.width = 50;
         this.height = 50;
-        this.cooldown = 20;
+        this.cooldown = 200;
+        this.damage = 10;
         this.verticalSpeed = 10;
         this.initAngle = 45;
         this.angleBaseSpeed = 0.2;
+        this.visibilityTime = 200;
     }
     setVisuals(attack, area) {
         this.area = area;
@@ -37,6 +39,7 @@ export class Sword extends Weapon {
     prepareTop(attack) {
         attack.flipped = false;
         attack.flipsPlayer = false;
+        this.visibilityTime = 100;
         this.x = attack.game.player.x - 10;
         this.y = attack.game.player.y + this.height / 2;
         this.angleSpeed = 0;
@@ -45,6 +48,7 @@ export class Sword extends Weapon {
     prepareBottom(attack) {
         attack.flipped = false;
         attack.flipsPlayer = false;
+        this.visibilityTime = 100;
         this.x = attack.game.player.x + 10;
         this.y = attack.game.player.y + attack.game.player.height - this.height;
         this.angleSpeed = 0;
@@ -54,6 +58,7 @@ export class Sword extends Weapon {
         attack.game.player.flipped = false;
         attack.flipped = false;
         attack.flipsPlayer = true;
+        this.visibilityTime = 200;
         this.x = attack.game.player.x + attack.game.player.width;
         this.y = attack.game.player.y + attack.game.player.height / 3;
         this.angle = -this.initAngle;
@@ -67,6 +72,7 @@ export class Sword extends Weapon {
         attack.game.player.flipped = true;
         attack.flipped = true;
         attack.flipsPlayer = true;
+        this.visibilityTime = 200;
         this.x = attack.game.player.x;
         this.y = attack.game.player.y + attack.game.player.height / 3;
         this.angle = this.initAngle;
@@ -75,22 +81,7 @@ export class Sword extends Weapon {
         this.closeSpeedY = 0;
         this.cx = attack.game.player.x + attack.game.player.width / 2;
         this.cy = attack.game.player.y + attack.game.player.height / 2;
-    }
-    updateVisuals(attack) {
-        if (this.angleSpeed != 0) {
-            this.angle += this.angleSpeed;
-            if (
-                (this.angleSpeed > 0 && this.angle > this.maxAngle) ||
-                (this.angleSpeed < 0 && this.angle < this.maxAngle)
-            ) attack.activated = false;
-        } else {
-            this.y += this.closeSpeedY;
-            if (
-                (this.closeSpeedY < 0 && this.y < attack.game.player.y  - this.height / 2) ||
-                (this.closeSpeedY > 0 && this.y > attack.game.player.y + attack.game.player.height)
-            ) attack.activated = false;
-        }
-    }
+    }  
     checkCollision(attack,enemy) {
         if (this.area === 'TOP' || this.area === 'BOTTOM') {
             this.checkCollisionVertical(attack,enemy);
@@ -106,10 +97,7 @@ export class Sword extends Weapon {
             this.y + this.height > enemy.y + enemy.offsetY &&
             this.y < enemy.y + enemy.offsetY + enemy.height + enemy.offsetH
         ) {
-            setTimeout(() => {
-                attack.activated = false;
-            }, 100);
-            enemy.deletionFlag = true;
+            this.doDamage(attack, enemy);
         }
     }
     checkCollisionHorizontal(attack, enemy) {
@@ -120,10 +108,7 @@ export class Sword extends Weapon {
                 attack.game.player.y + attack.game.player.offsetY + attack.game.player.height + attack.game.player.offsetH + 20 > enemy.y + enemy.offsetY + enemy.height + enemy.offsetH &&
                 attack.game.player.y + attack.game.player.offsetY < enemy.y + enemy.offsetY + enemy.height + enemy.offsetH
             ) {
-                setTimeout(() => {
-                    attack.activated = false;
-                }, 100);
-                enemy.deletionFlag = true;
+                this.doDamage(attack, enemy);
             }
         } else {
             if (
@@ -132,11 +117,28 @@ export class Sword extends Weapon {
                 attack.game.player.y + attack.game.player.offsetY + attack.game.player.height + attack.game.player.offsetH + 20 > enemy.y + enemy.offsetY + enemy.height + enemy.offsetH &&
                 attack.game.player.y + attack.game.player.offsetY < enemy.y + enemy.offsetY + enemy.height + enemy.offsetH
             ) {
-                setTimeout(() => {
-                    attack.activated = false;
-                }, 100);
-                enemy.deletionFlag = true;
+                this.doDamage(attack, enemy);
             }
+        }
+    } 
+    doDamage(attack, enemy) {
+        attack.activated = false;
+        enemy.health -= this.damage;
+        if (enemy.health <= 0) enemy.deletionFlag = true;
+    }
+    updateVisuals(attack) {
+        if (this.angleSpeed != 0) {
+            this.angle += this.angleSpeed;
+            if (
+                (this.angleSpeed > 0 && this.angle > this.maxAngle) ||
+                (this.angleSpeed < 0 && this.angle < this.maxAngle)
+            ) attack.activated = false;
+        } else {
+            this.y += this.closeSpeedY;
+            if (
+                (this.closeSpeedY < 0 && this.y < attack.game.player.y  - this.height / 2) ||
+                (this.closeSpeedY > 0 && this.y > attack.game.player.y + 20)
+            ) attack.activated = false;
         }
     }
     draw(context,attack) {
