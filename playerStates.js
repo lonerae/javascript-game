@@ -7,13 +7,22 @@ class State {
     constructor(game, state) {
         this.game = game;
         this.state = state;
+        this.settingsLock = false;
     }
     handleInput(input) {
         if (input.includes('1')) {
             this.game.player.setAttack(0);
         }
-        if (input.includes('2')) {
+        else if (input.includes('2')) {
             this.game.player.setAttack(1);
+        }
+        
+        if (input.includes('i')) {
+            if (!this.settingsLock) {
+                this.settingsLock = true;
+                this.game.player.inventory.isOpen = !this.game.player.inventory.isOpen;
+                setTimeout(() => { this.settingsLock = false; }, 100);
+            }
         }
     }
 }

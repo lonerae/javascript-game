@@ -3,8 +3,7 @@
     padding: 0;
     box-sizing: border-box;
 }
-
-#canvas1 {
+#canvasMain {
     position: absolute;
     width: 1280px;
     height: 720px;
@@ -15,7 +14,6 @@
     max-height: 100%;
     border: 5px solid black;
 }
-
 img {
     display: none;
 }

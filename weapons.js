@@ -1,7 +1,8 @@
 import { FloatingMessage } from "./floatingMessage.js";
 
 class Weapon {
-    constructor() {   
+    constructor(name) {
+        this.name = name;   
     }
     prepareTop() {}
     prepareBottom() {}
@@ -10,8 +11,8 @@ class Weapon {
 }
 
 export class Sword extends Weapon {
-    constructor() {
-        super();
+    constructor(name) {
+        super(name);
         this.image = sword;
         this.width = 50;
         this.height = 50;

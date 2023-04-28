@@ -5,7 +5,7 @@ import { Zombie } from "./enemy.js";
 import { UI } from "./ui.js";
 
 window.addEventListener('load', function() {
-    const canvas = this.document.getElementById('canvas1');
+    const canvas = this.document.getElementById('canvasMain');
     const bounds = { 
         'TOP': canvas.getBoundingClientRect().top,
         'LEFT': canvas.getBoundingClientRect().left

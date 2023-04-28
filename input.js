@@ -7,6 +7,7 @@ export default class InputHandler {
                     e.key === 'a' ||
                     e.key === 's' ||
                     e.key === 'd' ||
+                    e.key === 'i' ||
                     e.key === '1' ||
                     e.key === '2'
                 )   && this.keys.indexOf(e.key) === -1) {
@@ -21,6 +22,7 @@ export default class InputHandler {
                    e.key === 'a' ||
                    e.key === 's' ||
                    e.key === 'd' ||
+                   e.key === 'i' ||
                    e.key === '1' ||
                    e.key === '2'
                 ) {

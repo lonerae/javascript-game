@@ -17,13 +17,13 @@ export class UI {
         context.textAlign = 'left';
         context.restore();
         // health
-        context.strokeRect(20,20,301,21);
+        context.strokeRect(20,this.game.height - 60,301,21);
         context.fillStyle = '#ff0000';
-        context.fillRect(20, 20, (this.game.player.health / 100) * 300, 20);
+        context.fillRect(20, this.game.height - 60, (this.game.player.health / 100) * 300, 20);
         // psyche
-        context.strokeRect(20,50,151,21);
+        context.strokeRect(20,this.game.height - 30,151,21);
         context.fillStyle = '#00ff00';
-        context.fillRect(20, 50, (this.game.player.obsession / 100) * 300, 20);
+        context.fillRect(20, this.game.height - 30, (this.game.player.obsession / 100) * 300, 20);
         // abilities
         this.attackIcons.forEach((icon, index) => {
             context.drawImage(icon, 0, 0, this.attackWidth, this.attackHeight, 
@@ -57,5 +57,15 @@ export class UI {
         context.strokeStyle = '#ffff00';
         context.stroke();
         context.restore();
+        // settings
+        if (this.game.player.inventory.isOpen) {
+            context.save();
+            context.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            context.fillRect(0, 0, this.game.player.inventory.width, this.game.player.inventory.height);
+            context.font = '20px Helvetica';
+            context.fillStyle = 'white';
+            context.fillText(this.game.player.inventory.weapon.name, 30, 30);
+            context.restore();
+        }
     }
 }
