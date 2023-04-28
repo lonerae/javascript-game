@@ -1,3 +1,5 @@
+import { FloatingMessage } from "./floatingMessage.js";
+
 class Weapon {
     constructor() {   
     }
@@ -124,6 +126,7 @@ export class Sword extends Weapon {
     doDamage(attack, enemy) {
         attack.activated = false;
         enemy.health -= this.damage;
+        attack.game.floatingMessages.push(new FloatingMessage('-' + this.damage, enemy.x, enemy.y, enemy.x - enemy.speedX * 20, enemy.y - 20));
         if (enemy.health <= 0) enemy.deletionFlag = true;
     }
     updateVisuals(attack) {

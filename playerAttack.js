@@ -1,3 +1,5 @@
+import { FloatingMessage } from "./floatingMessage.js";
+
 class Attack {
     constructor(game) {
         this.game = game;
@@ -107,6 +109,7 @@ export class RangedAttack extends Attack {
                 {
                     this.activated = false;
                     enemy.health -= this.damage;
+                    this.game.floatingMessages.push(new FloatingMessage('-' + this.damage, enemy.x, enemy.y, enemy.x - enemy.speedX * 20, enemy.y - 20));
                     if (enemy.health <= 0) enemy.deletionFlag = true;
                 }
             });

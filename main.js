@@ -22,7 +22,7 @@ window.addEventListener('load', function() {
             this.enemySpawn = 100;
             this.enemyTimer = 0;
             this.enemies = [];
-            this.maxEnemies = 1;
+            this.maxEnemies = 10;
             this.activeAttacks = [];
             this.player = new Player(this);
             this.input = new InputHandler(this);
@@ -32,6 +32,7 @@ window.addEventListener('load', function() {
             this.player.currentState.enter();
             // initial attack is CLOSE
             this.player.currentAttack = this.player.attacks[0];
+            this.floatingMessages = [];
         }
         update(deltatime) {
             // handle player
@@ -51,8 +52,14 @@ window.addEventListener('load', function() {
             this.enemies.forEach(enemy => {
                 enemy.update(deltatime);
             });
+            // handle floating messages
+            this.floatingMessages.forEach(message => {
+                message.update();
+            });
+            
             this.enemies = this.enemies.filter(enemy => !enemy.deletionFlag);
             this.activeAttacks = this.activeAttacks.filter(attack => attack.visible || attack.cooldownTimer <= attack.cooldown);
+            this.floatingMessages = this.floatingMessages.filter(message => !message.markedForDeletion);
         }
         draw(context) {
             // handle player
@@ -64,6 +71,10 @@ window.addEventListener('load', function() {
             // handle enemies
             this.enemies.forEach(enemy => {
                 enemy.draw(context);
+            });
+            // handle floating messages
+            this.floatingMessages.forEach((message) => {
+                message.draw(context);
             });
             // handle ui
             this.playerInfo.draw(context);
