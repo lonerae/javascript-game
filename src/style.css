@@ -3,6 +3,13 @@
     padding: 0;
     box-sizing: border-box;
 }
+#loading {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    font-size: 80px;
+}
 #canvasMain {
     position: absolute;
     width: 1280px;

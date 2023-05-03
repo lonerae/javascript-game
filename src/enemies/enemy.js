@@ -21,8 +21,9 @@ export class Zombie extends Enemy {
         super(game);
         this.width = 50;
         this.height = 50;
-        this.image = zombie;
-        this.baseSpeed = 1.5;    
+        this.image = new Image();
+        this.image.src = "../../assets/entities/enemy_first.png";
+        this.baseSpeed = 1;    
         this.offsetX = 5;
         this.offsetW = -5;
         this.offsetY = 0;
@@ -30,20 +31,30 @@ export class Zombie extends Enemy {
         this.setSpawnPoint(Math.random()); 
         this.attackCooldown = 200;
         this.attackTimer = 0;
-        this.health = 50;
+        this.maxHealth = 50;
+        this.health = this.maxHealth;
     }
-    setSpawnPoint(chance) {
-        if (chance < 0.5) {
-            this.x = Math.random() * this.game.width - this.width;
-            this.y = Math.random() < 0.5 ? -this.height : this.game.height;
-            this.speedX = Math.random() < 0.5 ? this.baseSpeed : -this.baseSpeed;
-            this.speedY = this.y < 0 ? this.baseSpeed : -this.baseSpeed;
-        } else {
+    setSpawnPoint(areaChance) {
+        // left
+        if (areaChance < 0.25) {
+            this.x = -this.width;
             this.y = Math.random() * this.game.height - this.height;
-            this.x = Math.random() < 0.5 ? -this.width : this.game.width;
-            this.speedY = Math.random() < 0.5 ? this.baseSpeed : -this.baseSpeed;
-            this.speedX = this.x < 0 ? this.baseSpeed : -this.baseSpeed;
-        }       
+        }
+        //top
+        else if (areaChance < 0.5) {
+            this.y = -this.height;
+            this.x = Math.random() * this.game.width - this.width;
+        }
+        // right
+        else if (areaChance < 0.75) {
+            this.x = this.game.width;
+            this.y = Math.random() * this.game.height - this.height;
+        }
+        // bottom
+        else {
+            this.y = this.game.height;
+            this.x = Math.random() * this.game.width - this.width;
+        }
     }
     attack(deltatime) {
         if (this.attackTimer > this.attackCooldown) {
@@ -74,6 +85,8 @@ export class Zombie extends Enemy {
     draw(context) {
         context.fillStyle = '#ff0000';
         context.fillRect(this.x, this.y - 10, this.health, 5);
+        context.strokeStyle = '#000000';
+        context.strokeRect(this.x, this.y - 9, this.maxHealth, 5)
         context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
     }
 }

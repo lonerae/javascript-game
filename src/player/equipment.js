@@ -1,6 +1,6 @@
-import { Sword } from "./weapons.js";
+import { Sword } from "../attacks/weapons/sword.js";
 
-export default class Inventory {
+export default class Equipment {
     constructor() {
         this.width = 320;
         this.height = 360;
