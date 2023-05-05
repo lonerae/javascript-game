@@ -10,6 +10,7 @@ export default class Player {
         this.image = player;
         this.width = 50;
         this.height = 150;
+        this.frameY = 0;
         this.x = this.game.width / 2 - this.width / 2;
         this.y = this.game.height / 2 - this.height / 2;
         this.speedX = 0;
@@ -26,7 +27,6 @@ export default class Player {
         this.currentAttack = null;
         this.health = 100;
         this.obsession = 50;
-        this.flipped = false;
     }
     setState(state, speed) {
         this.currentState = this.states[state];
@@ -45,13 +45,6 @@ export default class Player {
         this.currentState.handleInput(input);
     }
     draw(context) {
-        if (this.flipped) {
-            context.scale(-1, 1);
-            context.drawImage(this.image, 0, 0, this.width, this.height, -this.x - this.width, this.y, this.width, this.height);
-            context.scale(-1, 1);    
-        }
-        else {
-            context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
-        }
+        context.drawImage(this.image, 0, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
     }
 }

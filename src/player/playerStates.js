@@ -53,16 +53,14 @@ export class Running extends State {
         super.handleInput(input);
         // horizontal movement
         if (input.includes('d')) {
-            this.game.player.flipped = false;
-            if (this.game.player.currentAttack.activated && this.game.player.currentAttack.flipsPlayer && this.game.player.currentAttack.flipped) this.game.player.flipped = true;
+            if (!this.game.player.currentAttack.cast) this.game.player.frameY = 0;
             if (this.checkX(1) &&
                 this.game.player.x + this.game.player.width < this.game.bgW) {
                 this.game.player.x += this.game.player.speedX;
             }
         } 
         else if (input.includes('a')) {
-            this.game.player.flipped = true;
-            if (this.game.player.currentAttack.activated && this.game.player.currentAttack.flipsPlayer && !this.game.player.currentAttack.flipped) this.game.player.flipped = false;
+            if (!this.game.player.currentAttack.cast) this.game.player.frameY = 1;
             if (this.checkX(-1) &&
                 this.game.player.x > 0) {
                 this.game.player.x += -this.game.player.speedX;
@@ -70,12 +68,14 @@ export class Running extends State {
         } 
         // vertical movement
         if (input.includes('w')) {
+            if (!this.game.player.currentAttack.cast) this.game.player.frameY = 2;
             if (this.checkY(-1) &&
                 this.game.player.y > 0) {
                 this.game.player.y += -this.game.player.speedY;
             }
         }
         else if (input.includes('s')) {
+            if (!this.game.player.currentAttack.cast) this.game.player.frameY = 3;
             if (this.checkY(1) &&
                 this.game.player.y + this.game.player.height < this.game.bgH) {
                 this.game.player.y += this.game.player.speedY;

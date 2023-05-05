@@ -5,7 +5,7 @@ export class UI {
         this.fontFamily = 'Helvetica';
         this.attackWidth = 70;
         this.attackHeight = 70;
-        this.attackIcons = [this.game.player.equipment.weapon.icon];
+        this.attackIcons = [this.game.player.equipment.weapon.meleeIcon];
         this.game.player.psyche.activeObsessions.forEach(obsession => this.attackIcons.push(obsession.icon))
         // equipment
         this.equipment = new Image();
@@ -93,7 +93,7 @@ export class UI {
     drawEquipment(context) {
         context.save();
         context.drawImage(this.equipment, 20, 20, this.game.player.equipment.width, this.game.player.equipment.height);
-        context.drawImage(this.game.player.equipment.weapon.image, this.weaponLocationX, this.weaponLocationY, this.equipmentWidth, this.equipmentHeight);
+        context.drawImage(this.game.player.equipment.weapon.icon, this.weaponLocationX, this.weaponLocationY, this.equipmentWidth, this.equipmentHeight);
         let i = 1;
         while (i < this.attackIcons.length) {
             context.drawImage(this.attackIcons[i], this.obsessionLocationX + 78 * (i - 1), this.obsessionLocationY, this.attackWidth - 3, this.attackHeight - 3);

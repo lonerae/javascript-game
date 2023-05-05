@@ -40,7 +40,7 @@ window.addEventListener('load', function() {
             this.enemySpawn = 100;
             this.enemyTimer = 0;
             this.enemies = [];
-            this.maxEnemies = 0;
+            this.maxEnemies = 1;
             this.activeAttacks = [];
             this.player = new Player(this);
             this.input = new InputHandler(this);
@@ -68,9 +68,9 @@ window.addEventListener('load', function() {
             // handle player
             this.player.update(this.input.keys);
             // handle attacks
-            this.player.currentAttack.update(deltatime);
+            // this.player.currentAttack.update(this.player.currentAttack, deltatime);
             this.activeAttacks.forEach(attack => {
-                if (attack !== this.player.currentAttack) attack.update(deltatime);
+                attack.update(attack, deltatime);
             });
             // handle enemies
             if (this.enemyTimer > this.enemySpawn && this.enemies.length < this.maxEnemies) {
@@ -87,7 +87,7 @@ window.addEventListener('load', function() {
                 message.update();
             });
             this.enemies = this.enemies.filter(enemy => !enemy.deletionFlag);
-            this.activeAttacks = this.activeAttacks.filter(attack => attack.visible || attack.cooldownTimer <= attack.cooldown);
+            this.activeAttacks = this.activeAttacks.filter(attack => attack.activated || attack.cast || attack.cooldownTimer <= attack.cooldown);
             this.floatingMessages = this.floatingMessages.filter(message => !message.markedForDeletion);
         }
         draw(context) {
@@ -100,7 +100,7 @@ window.addEventListener('load', function() {
             this.player.draw(context);
             // handle attacks
             this.activeAttacks.forEach(attack => {
-                if (attack.visible) attack.draw(context);
+                if (attack.activated) attack.draw(context);
             });
             // handle enemies
             this.enemies.forEach(enemy => {
