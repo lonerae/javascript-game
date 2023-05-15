@@ -9,16 +9,12 @@ window.addEventListener('load', function() {
     loading.style.display = 'none';
     
     const canvas = this.document.getElementById('canvasMain');
-    const bounds = { 
-        'TOP': canvas.getBoundingClientRect().top,
-        'LEFT': canvas.getBoundingClientRect().left
-    }
     const ctx = canvas.getContext('2d');
     canvas.width = 1280;
     canvas.height = 720;
 
     class Game {
-        constructor(width, height, bounds) {
+        constructor(width, height) {
             // bg
             // this.level = {
             //     "test_area" : ["../assets/background/test.png"]
@@ -36,11 +32,10 @@ window.addEventListener('load', function() {
             //
             this.width = width;
             this.height = height;
-            this.bounds = bounds;
             this.enemySpawn = 100;
             this.enemyTimer = 0;
             this.enemies = [];
-            this.maxEnemies = 1;
+            this.maxEnemies = 10;
             this.activeAttacks = [];
             this.player = new Player(this);
             this.input = new InputHandler(this);
@@ -116,7 +111,7 @@ window.addEventListener('load', function() {
         }
     }
 
-    const game = new Game(canvas.width, canvas.height, bounds);
+    const game = new Game(canvas.width, canvas.height);
     game.playerInfo.addListeners(canvas);
 
     let lastTime = 0;

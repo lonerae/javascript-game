@@ -118,12 +118,12 @@ export class UI {
         canvas.onmousemove =  e => {
             if (this.game.player.equipment.isOpen) {
                 // weapon info
-                this.showWeapon = e.clientX - this.game.bounds['LEFT']  > this.weaponLocationX && e.clientX - this.game.bounds['LEFT'] < this.weaponLocationX + this.equipmentWidth &&
-                    e.clientY - this.game.bounds['TOP'] > this.weaponLocationY && e.clientY - this.game.bounds['TOP'] < this.weaponLocationY + this.equipmentHeight;
+                this.showWeapon = e.offsetX  > this.weaponLocationX && e.offsetX < this.weaponLocationX + this.equipmentWidth &&
+                    e.offsetY > this.weaponLocationY && e.offsetY < this.weaponLocationY + this.equipmentHeight;
                 // obsession info
                 let i = 0
                 while (i < 4) {
-                    this.showObsession[i] = e.clientX - this.game.bounds['LEFT']  > this.obsessionLocationX + 78 * i && e.clientX - this.game.bounds['LEFT'] < this.obsessionLocationX + this.attackWidth + 78 * i && e.clientY - this.game.bounds['TOP'] > this.obsessionLocationY && e.clientY - this.game.bounds['TOP'] < this.obsessionLocationY + this.attackHeight;
+                    this.showObsession[i] = e.offsetX  > this.obsessionLocationX + 78 * i && e.offsetX < this.obsessionLocationX + this.attackWidth + 78 * i && e.offsetY > this.obsessionLocationY && e.offsetY < this.obsessionLocationY + this.attackHeight;
                     i++;
                 }
             }

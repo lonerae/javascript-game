@@ -9,7 +9,7 @@ export default class InputHandler {
             } 
         });
         window.addEventListener('click', e => {
-            this.game.player.attack(e.x - this.game.bounds['LEFT'] - this.game.normaliseFactors.X, e.y - this.game.bounds['TOP'] - this.game.normaliseFactors.Y);
+            this.game.player.attack(e.offsetX - this.game.normaliseFactors.X, e.offsetY - this.game.normaliseFactors.Y);
         })
         window.addEventListener('keyup', e => {
             if (this.validInputs.includes(e.key)) {

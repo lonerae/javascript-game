@@ -5,13 +5,13 @@ class Enemy {
         this.targetModifier = Math.random() * this.game.player.height;
     }
     update() {
-        if (    this.x > this.game.width || 
-                this.x < -this.width ||
-                this.y > this.game.height ||
-                this.y < -this.height
-            ) {
-            this.deletionFlag = true;  
-        }
+        // if (    this.x > this.game.width || 
+        //         this.x < -this.width ||
+        //         this.y > this.game.height ||
+        //         this.y < -this.height
+        //     ) {
+        //     this.deletionFlag = true;  
+        // }
     }
    
 }
@@ -22,38 +22,65 @@ export class Zombie extends Enemy {
         this.width = 50;
         this.height = 50;
         this.image = new Image();
-        this.image.src = "../../assets/entities/enemy_first.png";
-        this.baseSpeed = 1;    
+        this.image.src = "../../assets/entities/zombie.png";
+        this.baseSpeed = 2;    
         this.offsetX = 5;
         this.offsetW = -5;
         this.offsetY = 0;
         this.offsetH = -0;
-        this.setSpawnPoint(Math.random()); 
+        this.setSpawnPoint(); 
         this.attackCooldown = 200;
         this.attackTimer = 0;
         this.maxHealth = 50;
         this.health = this.maxHealth;
-    }
-    setSpawnPoint(areaChance) {
-        // left
-        if (areaChance < 0.25) {
-            this.x = -this.width;
-            this.y = Math.random() * this.game.height - this.height;
+        this.frames = {
+            "horizontal": 2,
+            "vertical": 1
         }
-        //top
-        else if (areaChance < 0.5) {
-            this.y = -this.height;
-            this.x = Math.random() * this.game.width - this.width;
+        this.maxFrameX;
+        this.frameX = 0;
+        this.frameY = 0;
+        this.frameTime = 50;
+        this.frameTimer = 0;
+    }
+    setSpawnPoint() {
+        let area = [0, 1, 2, 3];
+        if (this.game.player.x <= this.game.width / 2) {
+            area.splice(area.indexOf(0), 1);
+        }
+        if (this.game.player.x >= this.game.bgW - this.game.width / 2) {
+            area.splice(area.indexOf(1), 1);
+        }
+        if (this.game.player.y <= this.game.height / 2) {
+            area.splice(area.indexOf(2), 1);
+        }
+        if (this.game.player.y >= this.game.bgH - this.game.height / 2) {
+            area.splice(area.indexOf(3), 1);
+        }
+        let randomElement = area[Math.floor(Math.random() * area.length)];
+        // left
+        if (randomElement === 0) {
+            if (area.indexOf(1) != -1) this.x = this.game.player.x + this.game.player.width / 2 - this.game.width - this.width;
+            else this.x = this.game.bgW - this.game.width - this.width;
+            this.y = Math.random() * this.game.height + (this.game.player.y - this.game.height / 2);
         }
         // right
-        else if (areaChance < 0.75) {
-            this.x = this.game.width;
-            this.y = Math.random() * this.game.height - this.height;
+        else if (randomElement === 1) {
+            if (area.indexOf(0) != -1) this.x = this.game.player.x + this.game.player.width / 2 + this.game.width / 2 + this.width;
+            else this.x = this.game.width;
+            this.y = Math.random() * this.game.height + (this.game.player.y - this.game.height / 2);
+        }
+        //top
+        else if (randomElement === 2) {
+            if (area.indexOf(3) != -1) this.y = this.game.player.y + this.game.player.height / 2 - this.game.height / 2 - this.height;
+            else this.y = this.game.bgH - this.game.height - this.height;
+            this.x = Math.random() * this.game.width + (this.game.player.x - this.game.width / 2);
         }
         // bottom
         else {
-            this.y = this.game.height;
-            this.x = Math.random() * this.game.width - this.width;
+            if (area.indexOf(2) != -1) this.y = this.game.player.y + this.game.player.height / 2 + this.game.height / 2 + this.height;
+            else this.y = this.game.height + this.height;
+            this.x = Math.random() * this.game.width + (this.game.player.x - this.game.width / 2);
         }
     }
     attack(deltatime) {
@@ -66,10 +93,26 @@ export class Zombie extends Enemy {
     }
     update(deltatime) {
         super.update();
+        this.frameTimer += deltatime;
+        if (this.frameTimer > this.frameTime) {
+            if (this.frameX < this.maxFrameX) this.frameX++;
+            else this.frameX = 0;
+            this.frameTimer = 0;
+        }
         let dx = (this.game.player.x + this.game.player.width / 2) - (this.x + this.width / 2);
         let dy = (this.game.player.y + this.targetModifier) - (this.y + this.height / 2);
         let dist = Math.sqrt(dx * dx + dy * dy);
         this.speedX = dx / dist * this.baseSpeed;
+        if (Math.abs(this.speedX) > 1) {
+            this.maxFrameX = this.frames.horizontal;
+            if (this.speedX > 0) this.frameY = 0;
+            else if (this.speedX < 0) this.frameY = 1;
+        } else {
+            this.maxFrameX = this.frames.vertical;
+            if (this.frameX === 2) this.frameX = 0;
+            if (this.speedY > 0) this.frameY = 2;
+            else this.frameY = 3;
+        }
         this.speedY = dy / dist * this.baseSpeed;
         if (    this.x + this.offsetX + this.width + this.offsetW + this.speedX < this.game.player.x + this.game.player.offsetX ||
                 this.x + this.offsetX + this.speedX > this.game.player.x + this.game.player.offsetX + this.game.player.width + this.game.player.offsetW ||
@@ -87,6 +130,6 @@ export class Zombie extends Enemy {
         context.fillRect(this.x, this.y - 10, this.health, 5);
         context.strokeStyle = '#000000';
         context.strokeRect(this.x, this.y - 9, this.maxHealth, 5)
-        context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+        context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
     }
 }
